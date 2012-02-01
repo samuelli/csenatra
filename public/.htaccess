@@ -3,7 +3,7 @@
 # Options +FollowSymLinks +ExecCGI
 
 RewriteEngine On
-RewriteBase /~maxs/cgi-bin/csenatra/public/
+RewriteBase /~maxs
 
 RewriteRule ^$ dispatch.cgi
 RewriteCond %{REQUEST_FILENAME} !-f

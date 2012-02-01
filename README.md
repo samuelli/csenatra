@@ -5,6 +5,8 @@
 The directories leading to the `app.rb` must be `chmod 751`.
 `app.rb` can be `chmod 750`.
 
+Also the `.htaccess` file in `public` will need adjusting to match
+the install.
 
 ## Installing Gems On Server
 
