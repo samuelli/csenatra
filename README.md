@@ -38,12 +38,3 @@ the install.
 3. Now go to the server and run 
   `gem install --no-ri --no-rdoc --install-dir vendor/ vendor/cache/*.gem`. 
   This will install the gems to `./vendor` so they can be loaded via the script.
-
-## TODO
-
-- When the API is finalised, namespace it in a Grape API and add
-before filters for authentication and content_type. Then update the iOS
-app to use this versioned API.
-- Printing
-- There is a nicer way to include gems in the dispatcher that rails uses. Try
-using this.
