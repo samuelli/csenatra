@@ -4,7 +4,7 @@ require 'sinatra' unless defined?(Sinatra)
 require File.join(File.dirname(__FILE__), 'remote')
 require 'json'
 
-class App < Sinatra::Base
+class PublicApp < Sinatra::Base
   configure do
     set :public_folder, "#{File.dirname(__FILE__)}/public"
     set :views, "#{File.dirname(__FILE__)}/views"
@@ -91,4 +91,14 @@ class App < Sinatra::Base
     erb :auth
   end
 
+end
+
+App = Rack::Builder.new do
+  use Rack::Lock
+  use Rack::MethodOverride
+  use Rack::Head
+  
+  map "/" do
+    run PublicApp
+  end
 end
