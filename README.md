@@ -35,3 +35,13 @@ the install.
 1. Run `bundle install --deployment` to make a `Gemfile.lock` file.
 2. `bundle package` will download all the `.gem` files into the
   `vendor/cache` directory.
+
+Also if you are using your own SQLite3, then the `bundle install` will
+error. You then need to install the SQLite3 gem as per the instructions
+with the added options of ` -- --with-sqlite3-dir=/home/maxs/lib/sqlite3`
+or wherever your install is. E.g.
+
+```sh
+    gem install do_sqlite3 -v '0.10.8' --no-ri --no-rdoc
+    --install-dir vendor/bundle/ruby/1.8/ -- --with-sqlite3-dir=/home/maxs/lib/sqlite3
+```
