@@ -1,3 +1,70 @@
+class ApiApp < CoreApp
+  helpers do
+    def protected!
+      unless authorized?
+        response['WWW-Authenticate'] = %(Basic realm="Restricted Area")
+        throw(:halt, [401, "Not authorized\n"])
+      end
+    end
+
+    def authorized?
+      env["REMOTE_USER"] == "maxs"
+    end
+
+    def get_files
+      `ls #{File.join(File.dirname(__FILE__), 'uploads')}`.split("\n")
+    end
+  end
+  
+  before do
+    protected!
+  end
+  
+  # You can upload a file to be printed
+  post '/upload_print' do
+    content_type :json
+
+    # TODO: this
+    [false].to_json
+  end
+
+  # You can see a list of files available to be printed.
+  # This _was_ going to be a database, but then `scp` woudln't
+  # work.
+  get '/print_queue' do
+    content_type :json
+
+    get_files.to_json
+  end
+
+  get '/print' do
+    content_type :json
+
+    if get_files.include?(params[:file])
+      # status = `lpr -P #{params[:file]}`
+      # {:status => status}.to_json
+    else
+      halt 400, "FILE_MISSING"
+    end
+  end
+
+  get '/remote' do
+    content_type :json
+
+    if params['user']
+      # lookup user details
+      Remote::find_user(params['user'].gsub(/\"/, ''))
+
+    elsif params['finger']
+      # finger user
+      Remote::finger_user(params['finger'].gsub(/\"/, '') )
+
+    else
+      halt 400, "INVALID_ACTION"
+    end
+  end
+end
+
 module Remote
   # Given a cse username or a student number
   def self.find_user(user)

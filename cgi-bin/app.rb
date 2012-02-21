@@ -1,104 +1,60 @@
-# app.rb
-
+require 'bundler'
+Bundler.setup(:default, ENV["RACK_ENV"])
+$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
+RACK_ROOT = File.dirname(__FILE__)
 require 'sinatra' unless defined?(Sinatra)
-require File.join(File.dirname(__FILE__), 'remote')
 require 'json'
 
-class PublicApp < Sinatra::Base
-  configure do
-    set :public_folder, "#{File.dirname(__FILE__)}/public"
-    set :views, "#{File.dirname(__FILE__)}/views"
-  end
+require 'lib/core_app'
 
-  helpers do
+# Load Apps
+require 'lib/api'
 
-    def protected!
-      unless authorized?
-        response['WWW-Authenticate'] = %(Basic realm="Restricted Area")
-        throw(:halt, [401, "Not authorized\n"])
-      end
-    end
-
-    def authorized?
-      # The .htaccess will provide this
-      env["REMOTE_USER"] == "maxs"
-    end
-
-    def get_files
-      `ls #{File.join(File.dirname(__FILE__), 'uploads')}`.split("\n")
-    end
-  end
-
+class RootApp < CoreApp
   get '/' do
     send_file File.join(settings.public_folder, "index.html")
   end
-
-  # MAX ONLY PRIVATE AUTHED METHODS
-
-  # You can upload a file to be printed
-  post '/auth/upload_print' do
-    protected!
-    content_type :json
-
-    # TODO: Printing Uploads via HTTP
-    [false].to_json
-  end
-
-  # You can see a list of files available to be printed.
-  # This _was_ going to be a database, but then `scp` woudln't
-  # work.
-  get '/auth/print_queue' do
-    protected!
-    content_type :json
-
-    get_files.to_json
-  end
-
-  get '/auth/print' do
-    protected!
-    content_type :json
-
-    if get_files.include?(params[:file])
-      # TODO: Printing
-      # status = `lpr -P #{params[:file]}`
-      # {:status => status}.to_json
-    else
-      halt 400, "FILE_MISSING"
-    end
-  end
-
-  get '/auth/remote' do
-    protected!
-    content_type :json
-
-    if params['user']
-      # lookup user details
-      Remote::find_user(params['user'].gsub(/\"/, ''))
-
-    elsif params['finger']
-      # finger user
-      Remote::finger_user(params['finger'].gsub(/\"/, '') )
-
-    else
-      halt 400, "INVALID_ACTION"
-    end
-  end
-
-  # PUBLIC ACCESS
-
+  
+  # Login auth
   get '/auth' do
-    @user = env["REMOTE_USER"]
-    erb :auth
+    if env["REMOTE_USER"]
+      session[:user] = env["REMOTE_USER"]
+      redirect "/~maxs/"
+    else
+      response['WWW-Authenticate'] = %(Basic realm="Restricted Area")
+      throw(:halt, [401, "Not authorized\n"])
+    end
   end
+end
 
+main_app = Rack::Builder.new do  
+  map "/api" do
+    run ApiApp
+  end
+  
+  map "/" do
+    run RootApp
+  end
 end
 
 App = Rack::Builder.new do
   use Rack::Lock
+  use Rack::Lint
   use Rack::MethodOverride
   use Rack::Head
+  use Rack::ConditionalGet
+  use Rack::Session::Cookie, :key => 'rack.session.maxs',
+                             :path => '/~maxs',
+                             :expire_after => 2592000
+                             # TODO: :secret => 'password'
+
+  # This only occurs on local machine, since the rewrite removes it.
+  map "/~maxs" do
+    run main_app
+  end
   
+  # This is what actually gets used on the server.
   map "/" do
-    run PublicApp
+    run main_app
   end
 end
