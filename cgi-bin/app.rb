@@ -4,37 +4,49 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 RACK_ROOT = File.dirname(__FILE__)
 require 'sinatra' unless defined?(Sinatra)
 require 'json'
+require 'gollum/frontend/app'
+
+BASE_PATH = "/~maxs"
 
 require 'lib/core_app'
 
 # Load Apps
 require 'lib/api'
+require 'lib/wiki'
+require 'lib/root_app'
 
-class RootApp < CoreApp
-  get '/' do
-    send_file File.join(settings.public_folder, "index.html")
-  end
+module Rack
+  class WikiIndex
+    def initialize(app, options={})
+      @app = app
+    end
   
-  # Login auth
-  get '/auth' do
-    if env["REMOTE_USER"]
-      session[:user] = env["REMOTE_USER"]
-      redirect "/~maxs/"
-    else
-      response['WWW-Authenticate'] = %(Basic realm="Restricted Area")
-      throw(:halt, [401, "Not authorized\n"])
+    def call(env)
+      if ["", "/", "/index.html"].include?(env["PATH_INFO"])
+        env["PATH_INFO"] = "/wiki"
+      end
+      @app.call(env)
     end
   end
 end
 
 main_app = Rack::Builder.new do  
+  
+  use Rack::Static, :urls => ['/css', '/javascript', '/images'], :root => Precious::App.settings.public_folder
+  use Rack::WikiIndex
+  
   map "/api" do
     run ApiApp
+  end
+  
+  map "/wiki" do
+    run Precious::App
   end
   
   map "/" do
     run RootApp
   end
+  
 end
 
 App = Rack::Builder.new do
@@ -42,14 +54,13 @@ App = Rack::Builder.new do
   use Rack::Lint
   use Rack::MethodOverride
   use Rack::Head
-  use Rack::ConditionalGet
   use Rack::Session::Cookie, :key => 'rack.session.maxs',
                              :path => '/~maxs',
                              :expire_after => 2592000
                              # TODO: :secret => 'password'
 
   # This only occurs on local machine, since the rewrite removes it.
-  map "/~maxs" do
+  map BASE_PATH do
     run main_app
   end
   

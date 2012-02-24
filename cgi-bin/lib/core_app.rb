@@ -7,7 +7,7 @@ class CoreApp < Sinatra::Base
   helpers do
     def protected!
       unless session[:user]
-        redirect "/~maxs/auth"
+        redirect "#{BASE_PATH}/auth"
       end
     end
 
@@ -17,7 +17,7 @@ class CoreApp < Sinatra::Base
       else
         env["REQUEST_URI"]
       end
-      if path.gsub(/\/\~maxs/, "").gsub(/\/$/, '') == "#{link}"
+      if path.gsub(BASE_PATH, "").gsub(/\/$/, '') == "#{link}"
         "active"
       else
         ""

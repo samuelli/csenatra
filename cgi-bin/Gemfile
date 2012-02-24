@@ -3,6 +3,7 @@ source :rubygems
 gem "rack", "1.3.4"
 gem "sinatra", "1.2.7"
 gem "json"
+gem "gollum", :git => 'git://github.com/maxpow4h/gollum.git', :ref => 'a47ce17541'
 
 group :test do
   gem "rspec"

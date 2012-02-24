@@ -8,6 +8,7 @@ class ApiApp < CoreApp
     end
 
     def authorized?
+      # TODO: Abstract this to get it from ENV (or use the file path) for the admin user
       env["REMOTE_USER"] == "maxs"
     end
 
