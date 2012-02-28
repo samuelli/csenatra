@@ -126,11 +126,17 @@ module Remote
       # If its a key I have
       if field
         if result[field]
-          # Make it an array! One element for each line
-          if result[field].class == Array
-            result[field] << value
+          
+          if field == :user
+            result[field] = value.match(/^\S*/)[1]
           else
-            result[field] = [result[field], value]
+          
+            # Make it an array! One element for each line
+            if result[field].class == Array
+              result[field] << value
+            else
+              result[field] = [result[field], value]
+            end
           end
         else
           # Set from nil to a value
