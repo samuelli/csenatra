@@ -1,0 +1,31 @@
+#AddHandler cgi-script .cgi .rb
+#Options +FollowSymLinks +ExecCGI
+
+RewriteEngine On
+RewriteBase /~maxs
+
+RewriteRule ^$ dispatch.cgi
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ dispatch.cgi/$1 [L]
+
+<Files "api">
+  <IfModule mod_ssl.c>
+    AuthName "Restricted to CSE Users"
+    AuthType Basic
+    AuthYP On
+
+    require valid-user
+  </IfModule>
+  <IfModule !mod_ssl.c>
+    Redirect /~maxs/api https://cgi.cse.unsw.edu.au/~maxs/api
+  </IfModule>
+</Files>
+
+</Files>
+
+# Debugger
+#
+#<Files "dispatch.cgi">
+#SetHandler application/x-setuid-cgid
+#</Files>
