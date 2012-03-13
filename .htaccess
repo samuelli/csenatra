@@ -2,7 +2,7 @@
 #Options +FollowSymLinks +ExecCGI
 
 RewriteEngine On
-RewriteBase /~maxs
+RewriteBase /~samli/api
 
 RewriteRule ^$ dispatch.cgi
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -18,7 +18,7 @@ RewriteRule ^(.*)$ dispatch.cgi/$1 [L]
     require valid-user
   </IfModule>
   <IfModule !mod_ssl.c>
-    Redirect /~maxs/api https://cgi.cse.unsw.edu.au/~maxs/api
+    Redirect /~samli/api https://cgi.cse.unsw.edu.au/~samli/api
   </IfModule>
 </Files>
 

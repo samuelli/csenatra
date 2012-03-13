@@ -5,7 +5,7 @@ RACK_ROOT = File.dirname(__FILE__)
 require 'sinatra' unless defined?(Sinatra)
 require 'json'
 
-BASE_PATH = "/~maxs"
+BASE_PATH = "/~samli"
 
 class ApiApp < Sinatra::Base
   helpers do
@@ -18,7 +18,7 @@ class ApiApp < Sinatra::Base
 
     def authorized?
       # TODO: Abstract this to get it from ENV (or use the file path) for the admin user
-      env["REMOTE_USER"] == "maxs"
+      env["REMOTE_USER"] == "samli"
     end
   end
   
