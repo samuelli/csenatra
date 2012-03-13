@@ -9,7 +9,6 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ dispatch.cgi/$1 [L]
 
-<Files "api">
   <IfModule mod_ssl.c>
     AuthName "Restricted to CSE Users"
     AuthType Basic
@@ -20,9 +19,7 @@ RewriteRule ^(.*)$ dispatch.cgi/$1 [L]
   <IfModule !mod_ssl.c>
     Redirect /~samli/api https://cgi.cse.unsw.edu.au/~samli/api
   </IfModule>
-</Files>
 
-</Files>
 
 # Debugger
 #

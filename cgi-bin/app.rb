@@ -5,8 +5,6 @@ RACK_ROOT = File.dirname(__FILE__)
 require 'sinatra' unless defined?(Sinatra)
 require 'json'
 
-BASE_PATH = "/~samli"
-
 class ApiApp < Sinatra::Base
   helpers do
     def protected!
@@ -18,6 +16,7 @@ class ApiApp < Sinatra::Base
 
     def authorized?
       # TODO: Abstract this to get it from ENV (or use the file path) for the admin user
+
       env["REMOTE_USER"] == "samli"
     end
   end
@@ -126,20 +125,9 @@ module Remote
 
 end
 
-main_app = Rack::Builder.new do  
-  map "/api" do
-    run ApiApp
-  end
-end
-
 App = Rack::Builder.new do
   # This only occurs on local machine, since the rewrite removes it.
-  map BASE_PATH do
-    run main_app
-  end
-  
-  # This is what actually gets used on the server.
-  map "/" do
-    run main_app
+  map '/' do
+    run ApiApp 
   end
 end
