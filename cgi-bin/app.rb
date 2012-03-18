@@ -46,7 +46,12 @@ module Remote
   # Given a cse username or a student number
   def self.find_user(user)
     if user.match(/([\d]*)/)[1] == user
-      result = `pp \`priv upi "#{user}"\``
+      cse_id = `priv upi "#{user}"`
+      if cse_id
+        result = `pp #{cse_id}`
+      else
+        result = ""
+      end
     else
       result = `pp "#{user}"`
     end
