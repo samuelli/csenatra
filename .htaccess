@@ -9,17 +9,16 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ dispatch.cgi/$1 [L]
 
-  <IfModule mod_ssl.c>
-    AuthName "Restricted to CSE Users"
-    AuthType Basic
-    AuthYP On
+<IfModule mod_ssl.c>
+  AuthName "Restricted to CSE Users"
+  AuthType Basic
+  AuthYP On
 
-    require valid-user
-  </IfModule>
-  <IfModule !mod_ssl.c>
-    Redirect /~samli/api https://cgi.cse.unsw.edu.au/~samli/api
-  </IfModule>
-
+  require valid-user
+</IfModule>
+<IfModule !mod_ssl.c>
+  Redirect /~samli/api https://cgi.cse.unsw.edu.au/~samli/api
+</IfModule>
 
 # Debugger
 #

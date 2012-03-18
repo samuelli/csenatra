@@ -1,38 +1,23 @@
-# CSEnatra
+# CSEnatra - Remote Version
 
 This is a working Sinatra app that can run on CSE
 servers. It also exposes some functionality via
 a JSON api. There is an [iOS App](https://github.com/maxpow4h/k17_ios)
 that will allow you to use this remotely.
 
+## Remote Version
+
+This branch is the 'remote version' which features only the
+minimum to provie a backend for the iOS App K17 or bark.
+This can run along side other web apps inside your `public_html`.
+
 ## Install
 
-Take your `public_html` and rename it `old_public_html`.
-`git clone git://github.com/maxpow4h/csenatra public_html`
-to make this repo your new `public_html` (or consider forking
-the repo and using your fork). Now copy the contents of your
-`old_public_html` into `cgi-bin/public`.
+Put this inside your `public_html` in an `api` directory.
+Consider forking this repo and then
+`git clone git://github.com/maxpow4h/csenatra api`
 
-- You will have to replace `~maxs` with your username.
+- You will have to replace all occurrences `~samli` with your username.
 - Run `bundle install --deployment` to make a `Gemfile.lock` file.
-
-Also, if you were using `php` or `cgi`, try using
-[Rack Legacy](https://github.com/eric1234/rack-legacy).
-
-Also if you are using your own SQLite3, then the `bundle install` will
-error. You then need to install the SQLite3 gem as per the instructions
-with the added options of ` -- --with-sqlite3-dir=/home/maxs/lib/sqlite3`
-or wherever your install is. E.g.
-
-```sh
-    gem install do_sqlite3 -v '0.10.8' --no-ri --no-rdoc
-    --install-dir vendor/bundle/ruby/1.8/ -- --with-sqlite3-dir=/home/maxs/lib/sqlite3
-```
-
-## File Permissions
-
-The directories leading to the `app.rb` must be `chmod 751`.
-`app.rb` can be `chmod 750`.
-
-Also the `.htaccess` file in `public` will need adjusting to match
-the install.
+- Also check the file permissions are correct (they will need fiddling with).
+- If something is going wrong for you, enable debugging in the `.htaccess` file
