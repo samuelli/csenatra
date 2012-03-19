@@ -56,7 +56,7 @@ module Remote
       result = `pp "#{user}"`
     end
     if result == ""
-      nil.to_json # not found
+      {:not_found => true}.to_json # not found
     else
       parse_user(result).to_json
     end
