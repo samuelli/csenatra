@@ -106,8 +106,11 @@ module Remote
       field = fields[key]
       # If its a key I have
       if field
+        
+        # This if is for if the key was defined in a previous line.
+        # Then it should recycle the key.
+        # it should also make an array of values, since it is miltiline
         if result[field]
-          
             # Make it an array! One element for each line
             if result[field].class == Array
               result[field] << value
@@ -115,6 +118,8 @@ module Remote
               result[field] = [result[field], value]
             end
           end
+          
+          # The else is for if this is a new key, to define it and set it as a line
         else
           # Set from nil to a value
           result[field] = value
@@ -123,7 +128,12 @@ module Remote
     end
     
     begin
-      result[:program] = result[:classes][0].match(/^(\d{4})_Student/)[1]
+      if result[:classes].class == Array
+        result[:program] = result[:classes][0].match(/^(\d{4})_Student/)[1]
+      else
+        # Condition for single line classes
+        result[:program] = result[:classes].match(/^(\d{4})_Student/)[1]
+      end
     rescue
       result[:program] = "NONCSE"
     end
