@@ -108,10 +108,6 @@ module Remote
       if field
         if result[field]
           
-          if field == :user
-            result[field] = value.match(/^\S*/)[1]
-          else
-          
             # Make it an array! One element for each line
             if result[field].class == Array
               result[field] << value
@@ -125,6 +121,14 @@ module Remote
         end
       end
     end
+    
+    begin
+      result[:program] = result[:classes][0].match(/^(\d{4})_Student/)[1]
+    rescue
+      result[:program] = "NONCSE"
+    end
+    result[:user] = result[:user].match(/^\S*/)[0]
+    
     return result
   end
 
