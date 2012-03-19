@@ -47,7 +47,7 @@ module Remote
   def self.find_user(user)
     if user.match(/([\d]*)/)[1] == user
       cse_id = `priv upi "#{user}"`
-      if cse_id
+      if cse_id != ""
         result = `pp #{cse_id}`
       else
         result = ""
@@ -56,7 +56,7 @@ module Remote
       result = `pp "#{user}"`
     end
     if result == ""
-      nil # not found
+      nil.to_json # not found
     else
       parse_user(result).to_json
     end
