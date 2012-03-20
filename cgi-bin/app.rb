@@ -111,12 +111,11 @@ module Remote
         # Then it should recycle the key.
         # it should also make an array of values, since it is miltiline
         if result[field]
-            # Make it an array! One element for each line
-            if result[field].class == Array
-              result[field] << value
-            else
-              result[field] = [result[field], value]
-            end
+          # Make it an array! One element for each line
+          if result[field].class == Array
+            result[field] << value
+          else
+            result[field] = [result[field], value]
           end
           
           # The else is for if this is a new key, to define it and set it as a line
